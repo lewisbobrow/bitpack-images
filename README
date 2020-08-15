@@ -1,65 +1,14 @@
-/*********************************************************/
-
-HW4: Machine Arithmetic
-
-/*********************************************************/
-
-AUTHORS:
-
-Name: John Stewart
-UTLN: jstewa12
-
-Name: Lewis Bobrow
-UTLN: lbobro01
-
-/*********************************************************/
-
-COLLABORATORS:
-
-COMP 40 TA's including but not limited to:
-- Grant Versfeld
-- Ben London
-- Ryan Polhemus
-
-/*********************************************************/
-
-ARCHITECTURE:
-
-We implemented our compression/decompression mechanisms using various
-functions, which promoted modularity and different levels of abstraction by
-being split between different files (quantize.c, pack.c, unpack.c,
-dequantize.c). These functions had set purposes that fit within each step of
-each mechanism (quantization and packing of info for compression and unpacking
-and dequantization for decompression), including converting red/green/blue
-values in RGB pixels to Y, Pb, and Pr values in component video space, and
-decoding information stored in 32-bit words into a/b/c/d/aPb/aPr values.
-
-We also defined various structs to allow for easy mobility of information
-between functions and steps within each mechanism. These included:
-- cvsPix: contains Y, Pb, and Pr values for each regular RGB pixel (1:1 ratio)
-- info2x2: contains a, b, c, d, aPb, and aPr values for each 2x2 neighborhood
-           of cvsPix struct objects. These values are decimal float values
-- info2x2dq: contains quantized integer values for the a, b, c, d, aPb, and
-             aPr in an info2x2 object structs
-- lsbInfo: contains widths and least significant bits for the encoded,
-           multi-bit a/b/c/d/aPb/aPr values stored in each 32-bit word (each
-           word corresponds to a certain info2x2dq struct object)
-
-/*********************************************************/
-
-ASPECTS CORRECTLY IMPLEMENTED:
-
-40image.c - correctly implemented functionality for taking arguments and
+40image.c - implemented functionality for taking arguments and
             commands from standard input and the command line, as well as
             calling the main functionality for compression and decompression.
 
-40image.h - correctly defined various structs and declared various functions
+40image.h - defines various structs and declared various functions
             used for both compression and decompression, including cvsPix,
             info2x2, info2x2dq, and lsbInfo objects (described below), and
             functions utilized for pixel-value conversion, quantization/
             dequantization, and bit-packing/unpacking.
 
-compress40.c - correctly implemented main functionality for compression and
+compress40.c - implemented main functionality for compression and
                decompression mechanisms, which calls various functions defined
                in linked files to complete pixel/pixel-neighborhood-value
                conversion, quantization/dequantization, and bit-
@@ -67,42 +16,29 @@ compress40.c - correctly implemented main functionality for compression and
                out Pnm_ppm images, allowing for communication between
                different commands on the command line
 
-quantize.c - correctly maps through the original image to first convert each
+quantize.c - maps through the original image to first convert each
              rgb pixel to component video, then calculate the a, b, c, d, avg
              Pb and avg Pr values of each 2x2 block of component video pixels.
              These values are then quantized using quantization functions.
 
-pack.c - correctly stores each struct of quantized a, b, c, d, avg Pb and avg
+pack.c - stores each struct of quantized a, b, c, d, avg Pb and avg
          Pr values in a uint64_t using the bitpacking functions declared in
          bitpack.h. Prints the first 32 bits of each word to stdout so that
          the most significant character (8 bits) of those 32 appears first.
 
-unpack.c - correctly gets words by reading in four characters at a time from
+unpack.c - gets words by reading in four characters at a time from
            the input file, and storing them in a uint64_t word using the
            bitpacking functions. The a, b, c, d avg Pb and avg Pr values are
            then unpacked from These words and stored in a UArray2_T of structs
            with dimensions equal to half the size of the original image.
 
-dequantize.c - correctly maps through all the structs in the UArray2_T,
+dequantize.c - maps through all the structs in the UArray2_T,
                dequantizes each value, converts each struct to its four
                corresponding rgb pixels, and then stores these pixels in a
                UArray2_T of Pnm_rgb objects.
 
-bitpack.c - correctly defined the bitpacking functions from bitpack.h,
+bitpack.c - defines the bitpacking functions from bitpack.h,
             including functions to check whether a given number can fit in a
             given width, functions to access the values in a specified field
             of bits, and functions to update the values within a specified
             field of bits.
-
-
-valgrind reports no memory leaks
-
-/*********************************************************/
-
-HOURS SPENT:
-
-Hours spent analyzing assignment: 8.25 hours
-
-Hours spent completing assignment: 21.5 hours
-
-/*********************************************************/
